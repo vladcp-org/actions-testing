@@ -1,0 +1,16 @@
+name: Run tests
+
+on: 
+  workflow_run:
+    workflows: ["Deploy"]
+    types: 
+      - completed
+jobs:
+  tests:
+    name: "Run dummy tests"
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Print hello
+        run: >
+          echo "Hello World!"
