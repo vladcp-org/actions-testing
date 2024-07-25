@@ -8,6 +8,7 @@ env:
 jobs:
   deploy:
     name: "Run deploy scripts"
+    runs-on: linux
     steps:
       - uses: actions/checkout@v4
       - name: Sets branch name
