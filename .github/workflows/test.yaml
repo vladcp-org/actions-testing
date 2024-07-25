@@ -1,12 +1,11 @@
 name: Run tests
 
 on: 
+  workflow_dispatch:
   workflow_run:
     workflows: ["Deploy"]
     types: 
       - completed
-env:
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 jobs:
   tests:
     name: "Run dummy tests"
@@ -17,6 +16,12 @@ jobs:
       - name: Print hello
         run: >
           echo "Hello World!"
+      - name: Determine branch name
+        run: |
+          if ["${{github.event_name}}" == "workflow_run"]; then
+            echo "BRANCH_NAME=${{github.event.workflow_run.head_branch}}" >> $GITHUB_ENV
+          elif ["${{github.event_name}}" == "workflow_dispatch"]; then
+            echo "BRANCH_NAME=${{github.ref_name || github.head_ref}}" >> $GITHUB_ENV
       - name: Print event branch, hopefully
         run: >
-          echo ${{ github.event.workflow_run.head_branch}}
+          echo "BRANCH NAME is ${{ env.BRANCH_NAME }}"
