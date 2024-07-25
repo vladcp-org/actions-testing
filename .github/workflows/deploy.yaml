@@ -17,3 +17,7 @@ jobs:
           name: "${{ env.BRANCH_NAME }}"
         run: >
           echo "MODIFIED_BRANCH=$(echo "${name/\//-}" | tr '[:upper:]' '[:lower:]')-tf" >> $GITHUB_OUTPUT
+      - name: Skip this step
+        if: ${{ env.BRANCH_NAME != 'branch'}}
+        run: >
+          echo "Skipped"
