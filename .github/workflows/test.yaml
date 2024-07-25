@@ -5,6 +5,8 @@ on:
     workflows: ["Deploy"]
     types: 
       - completed
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 jobs:
   tests:
     name: "Run dummy tests"
@@ -15,3 +17,6 @@ jobs:
       - name: Print hello
         run: >
           echo "Hello World!"
+      - name: Print event branch, hopefully
+        run: >
+          echo ${{ github.event.workflow_run.head_branch}}
