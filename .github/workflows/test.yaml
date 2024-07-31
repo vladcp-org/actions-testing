@@ -8,6 +8,12 @@ on:
       - completed
   # pull_request:
 
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+  id-token: write
 jobs:
   tests:
     name: "Run dummy tests"
