@@ -26,3 +26,25 @@ jobs:
       - name: Print event branch, hopefully
         run: >
           echo "BRANCH NAME is ${{ env.BRANCH_NAME }}"
+
+      - name: Recognize sha ref
+        id: sharef
+        run: |
+          if [ "$EVENT" == 'pull_request' ]
+          then
+            echo "sha=${{github.event.pull_request.head.sha}}" >> $GITHUB_OUTPUT
+          elif [ "$EVENT" == 'workflow_run' ]
+          then
+            echo "sha=${{github.event.workflow_run.head_sha}})" >> $GITHUB_OUTPUT
+          else
+            echo "sha=$GITHUB_SHA" >> $GITHUB_OUTPUT
+          fi
+        env:
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+
+      - name: Commit Action Status
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          sha: ${{ steps.sharef.outputs.sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
