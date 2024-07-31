@@ -56,7 +56,7 @@ jobs:
         with:
           name: Test Summary
           conclusion: ${{ job.status }}
-          sha: ${{ steps.sharef.outputs.sha }}
+          # sha: ${{ steps.sharef.outputs.sha }}
           token: ${{ secrets.GITHUB_TOKEN }}
           output: |
             {"summary": "This job was successful"}
