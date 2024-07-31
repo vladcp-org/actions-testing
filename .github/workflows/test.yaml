@@ -49,5 +49,9 @@ jobs:
         uses: LouisBrunner/checks-action@v1.1.1
         with:
           name: Test Summary
+          conclusion: ${{ job.status }}
           sha: ${{ steps.sharef.outputs.sha }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          output: |
+            {"summary": "This job was successful"}
+
