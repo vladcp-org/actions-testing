@@ -106,14 +106,16 @@ jobs:
             console.log("Found check run:", JSON.stringify(runDummyTestsCheck, null, 2));
             console.log('ID: ' + runDummyTestsCheck.id)
             const result = github.checks.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo
               check_run_id: runDummyTestsCheck.id,
               status: 'completed',
               conclusion: 'success',
               output: {
                 title: 'Run dummy tests',
-                summary: 'Results: marvellous results right here'
+                summary: 'Results: marvellous results right here',
+                text: 'You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.'
               },
-              owner: context.repo.owner,
-              repo: context.repo.repo
             })
+            console.log("Response: ", JSON.stringify(result));
             console.log("Response: ", JSON.stringify(result, null, 2));
