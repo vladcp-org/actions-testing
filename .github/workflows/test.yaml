@@ -107,8 +107,10 @@ jobs:
             console.log('ID: ' + runDummyTestsCheck.id)
             const result = github.checks.update({
               check_run_id: runDummyTestsCheck.id,
+              status: 'completed',
               conclusion: 'success',
               output: {
+                title: 'Run dummy tests',
                 summary: 'Results: marvellous results right here'
               },
               owner: context.repo.owner,
