@@ -7,7 +7,7 @@ on:
   #   workflows: ["Deploy"]
   #   types: 
   #     - completed
-  pull_request:
+  # pull_request:
   push:
     branches:
       - "feature/**"
@@ -16,7 +16,6 @@ permissions: write-all
 jobs:
   tests:
     name: "Run dummy tests"
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch an action and get the run ID
