@@ -11,9 +11,9 @@ on:
   #   types: 
   #     - completed
   pull_request:
-  push:
-    branches:
-      - "feature/**"
+  # push:
+  #   branches:
+  #     - "feature/**"
 
 permissions: write-all
 jobs:
