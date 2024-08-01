@@ -22,7 +22,7 @@ jobs:
         uses: codex-/return-dispatch@v1
         id: return_dispatch
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ github.token }}
           ref: ${{ github.head_ref || github.ref_name }}
           repo: actions-testing
           owner: vladcp-org
