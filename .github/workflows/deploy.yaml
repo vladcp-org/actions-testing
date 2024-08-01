@@ -40,16 +40,16 @@ jobs:
           echo "Skipped"
         
       # dispatch test workflow
-      - uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.PAT }}
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                workflow_id: 'test.yaml',
-                ref: '${{ github.ref }}',
-                inputs: {
-                  pr_number: '${{ steps.pr.outputs.pull_request_number }}'
-                },
-            });
+      # - uses: actions/github-script@v6
+      #   with:
+      #     github-token: ${{ secrets.PAT }}
+      #     script: |
+      #       await github.rest.actions.createWorkflowDispatch({
+      #           owner: context.repo.owner,
+      #           repo: context.repo.repo,
+      #           workflow_id: 'test.yaml',
+      #           ref: '${{ github.ref }}',
+      #           inputs: {
+      #             pr_number: '${{ steps.pr.outputs.pull_request_number }}'
+      #           },
+      #       });

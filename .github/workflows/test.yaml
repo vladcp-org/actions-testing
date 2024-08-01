@@ -11,9 +11,9 @@ on:
   #   types: 
   #     - completed
   # pull_request:
-  # push:
-  #   branches:
-  #     - "feature/**"
+  push:
+    branches:
+      - "feature/**"
 
 permissions: write-all
 jobs:
@@ -75,6 +75,11 @@ jobs:
         env:
           EVENT: ${{ github.event_name }}
           REF: ${{ github.ref }}
+      - name: Get Pull Request Number
+        id: pr
+        run: echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: get sha from PR number and save output
         id: get-sha
@@ -82,47 +87,70 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log('PR number: ' + ${{ inputs.pr_number }})
+            console.log('PR number: ' + ${{ steps.pr.outputs.pull_request_number }})
             const pr = await github.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: ${{ inputs.pr_number }}
+              pull_number: ${{ steps.pr.outputs.pull_request_number }}
             })
             console.log('PR Head sha: ' + pr.data.head.sha)
             core.setOutput('sha', pr.data.head.sha)
-      # todo report tests 
-      - name: Report tests check
-        if: ${{ github.event.inputs.pr_number }}
+
+      - name: Get workflow runs
         uses: actions/github-script@v3
         with:
           github-token: ${{ github.token }}
           script: |
-            const checks = await github.checks.listForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: '${{ steps.get-sha.outputs.sha }}'
-            })
-            const runDummyTestsCheck = checks.data.check_runs.find(check_run => check_run.name === "Run dummy tests")
-            console.log("Found check run:", JSON.stringify(runDummyTestsCheck, null, 2));
-            console.log('ID: ' + runDummyTestsCheck.id)
-            const result = github.checks.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              check_run_id: runDummyTestsCheck.id,
-              status: 'completed',
-              conclusion: 'success',
-              output: {
-                title: 'Run dummy tests',
-                summary: 'Results: marvellous results right here',
-                text: 'You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.',
-              },
-              completed_at: new Date().toISOString(),
-            })
-            console.log("Response: ", JSON.stringify(result, null, 2));
-            const check = await github.checks.listForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: '${{ steps.get-sha.outputs.sha }}'
-            })
-            const dummy = check.data.check_runs.find(check_run => check_run.name === "Run dummy tests")
-            console.log("FINAL CHECK RUN", JSON.stringify(dummy, null, 2));
+            let workflows = []
+            let found = false
+            let deployWorkflow;
+            while (!found)
+            {
+              let response = github.rest.actions.listWorkflowRuns({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                head_sha: '${{ steps.get-sha.outputs.sha }}'
+              })
+              deployWorkflow = response.data.workflow_runs.find(workflow => workflow.name === "Deploy")
+              if (deployWorkflow && deployWorkflow.length > 0) {
+                found = true;
+                break;
+              }
+            }
+            console.log("Deploy workflow: ", JSON.stringify(deployWorkflow, null, 2))
+      # todo report tests 
+      # - name: Report tests check
+      #   if: ${{ github.event.inputs.pr_number }}
+      #   uses: actions/github-script@v3
+      #   with:
+      #     github-token: ${{ github.token }}
+      #     script: |
+      #       const checks = await github.checks.listForRef({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         ref: '${{ steps.get-sha.outputs.sha }}'
+      #       })
+      #       const runDummyTestsCheck = checks.data.check_runs.find(check_run => check_run.name === "Run dummy tests")
+      #       console.log("Found check run:", JSON.stringify(runDummyTestsCheck, null, 2));
+      #       console.log('ID: ' + runDummyTestsCheck.id)
+      #       const result = github.checks.update({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         check_run_id: runDummyTestsCheck.id,
+      #         status: 'completed',
+      #         conclusion: 'success',
+      #         output: {
+      #           title: 'Run dummy tests',
+      #           summary: 'Results: marvellous results right here',
+      #           text: 'You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.',
+      #         },
+      #         completed_at: new Date().toISOString(),
+      #       })
+      #       console.log("Response: ", JSON.stringify(result, null, 2));
+      #       const check = await github.checks.listForRef({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         ref: '${{ steps.get-sha.outputs.sha }}'
+      #       })
+      #       const dummy = check.data.check_runs.find(check_run => check_run.name === "Run dummy tests")
+      #       console.log("FINAL CHECK RUN", JSON.stringify(dummy, null, 2));
