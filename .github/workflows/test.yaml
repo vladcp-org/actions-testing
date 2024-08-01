@@ -118,10 +118,10 @@ jobs:
               },
             })
             console.log("Response: ", JSON.stringify(result, null, 2));
-            const checks = await github.checks.listForRef({
+            const check = await github.checks.listForRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: '${{ steps.get-sha.outputs.sha }}'
             })
-            const runDummyTestsCheck = checks.data.check_runs.find(check_run => check_run.name === "Run dummy tests")
-            console.log("FINAL CHECK RUN", JSON.stringify(runDummyTestsCheck, null, 2));
+            const dummy = check.data.check_runs.find(check_run => check_run.name === "Run dummy tests")
+            console.log("FINAL CHECK RUN", JSON.stringify(dummy, null, 2));
