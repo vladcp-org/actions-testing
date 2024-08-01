@@ -103,9 +103,9 @@ jobs:
               ref: '${{ steps.get-sha.outputs.sha }}'
             })
             const runDummyTestsCheck = checks.data.check_runs.find(check_run => check_run.name === "Run dummy tests")
-            console.log('Check run dummy tests: ' + runDummyTestsCheck)
+            console.log('Check run dummy tests: ' + runDummyTestsCheck.data)
             github.checks.update({
-              check_run_id: runDummyTestsCheck.id,
+              check_run_id: runDummyTestsCheck.data.id,
               conclusion: 'success',
               output: {
                 title: 'Run tests',
