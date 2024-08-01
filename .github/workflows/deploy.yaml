@@ -50,6 +50,6 @@ jobs:
                 workflow_id: 'test.yaml',
                 ref: '${{ github.ref }}',
                 inputs: {
-                  pr_number: ${{ steps.pr.outputs.pull_request_number }}
+                  pr_number: '${{ steps.pr.outputs.pull_request_number }}'
                 },
             });
