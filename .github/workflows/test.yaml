@@ -26,7 +26,7 @@ jobs:
         uses: codex-/return-dispatch@v1
         id: return_dispatch
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.PAT }}
           ref: ${{ github.ref }}
           repo: actions-testing
           owner: vladcp-org
@@ -35,7 +35,7 @@ jobs:
       - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
         uses: Codex-/await-remote-run@v1.0.0
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ github.token }}
           repo: actions-testing
           owner: vladcp-org
           run_id: ${{ steps.return_dispatch.outputs.run_id }}
