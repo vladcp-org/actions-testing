@@ -5,7 +5,7 @@ on:
     inputs:
       distinct_id:
         description: "distinct id"
-  pull_request:
+  # pull_request:
   # push:
   #   branches:
   #     - "feature/**"
