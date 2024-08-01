@@ -103,20 +103,18 @@ jobs:
           script: |
             let found = false
             let deployWorkflow
-            while (!found)
-            {
-              const {data: runs} = await github.rest.actions.listWorkflowRuns({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                head_sha: '${{ steps.get-sha.outputs.sha }}',
-              })
-              deployWorkflow = response.workflow_runs.find(workflow => workflow.name === "Deploy")
-              if (deployWorkflow && deployWorkflow.length > 0) {
-                found = true
-                break;
-              }
+            const {data: runs} = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: '${{ steps.get-sha.outputs.sha }}',
+            })
+            deployWorkflow = response.workflow_runs.find(workflow => workflow.name === "Deploy")
+            if (deployWorkflow && deployWorkflow.length > 0) {
+              found = true
             }
             console.log("Deploy workflow: ", JSON.stringify(deployWorkflow, null, 2))
+
+
       # todo report tests 
       # - name: Report tests check
       #   if: ${{ github.event.inputs.pr_number }}
