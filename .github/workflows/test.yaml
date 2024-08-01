@@ -23,7 +23,7 @@ jobs:
         id: return_dispatch
         with:
           token: ${{ secrets.PAT }}
-          ref: ${{ github.ref }}
+          ref: ${{ github.head_ref || github.ref_name }}
           repo: actions-testing
           owner: vladcp-org
           workflow: deploy.yaml
