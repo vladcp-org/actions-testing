@@ -114,8 +114,9 @@ jobs:
               output: {
                 title: 'Run dummy tests',
                 summary: 'Results: marvellous results right here',
-                text: 'You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.'
+                text: 'You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.',
               },
+              completed_at: new Date().toISOString(),
             })
             console.log("Response: ", JSON.stringify(result, null, 2));
             const check = await github.checks.listForRef({
