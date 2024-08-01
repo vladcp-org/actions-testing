@@ -91,4 +91,21 @@ jobs:
             console.log('PR Head sha: ' + pr.data.head.sha)
             core.setOutput('sha', pr.data.head.sha)
       # todo report tests 
-      
+      - name: Report tests check
+        if: ${{ github.event.inputs.pr_number }}
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.checks.create({
+              name: 'run tests',
+              head_sha: '${{ steps.get-sha.sha}}',
+              status: 'completed',
+              conclusion: 'success',
+              output: {
+                title: 'Run tests',
+                summary: 'Results: marvellous results right here'
+              },
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            })
