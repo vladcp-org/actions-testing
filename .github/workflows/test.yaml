@@ -95,7 +95,7 @@ jobs:
         if: ${{ github.event.inputs.pr_number }}
         uses: actions/github-script@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
           script: |
             const checks = await github.checks.listForRef({
               owner: context.repo.owner,
