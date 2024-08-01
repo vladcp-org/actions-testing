@@ -117,5 +117,11 @@ jobs:
                 text: 'You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.'
               },
             })
-            console.log("Response: ", JSON.stringify(result));
             console.log("Response: ", JSON.stringify(result, null, 2));
+            const checks = await github.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: '${{ steps.get-sha.outputs.sha }}'
+            })
+            const runDummyTestsCheck = checks.data.check_runs.find(check_run => check_run.name === "Run dummy tests")
+            console.log("FINAL CHECK RUN", JSON.stringify(runDummyTestsCheck, null, 2));
