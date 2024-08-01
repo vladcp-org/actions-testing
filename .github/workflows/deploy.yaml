@@ -48,7 +48,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 workflow_id: 'test.yaml',
-                ref: ${{ github.ref }},
+                ref: '${{ github.ref }}',
                 inputs: {
                   pr_number: ${{ steps.pr.outputs.pull_request_number }}
                 },
