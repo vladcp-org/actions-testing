@@ -106,12 +106,12 @@ jobs:
             let deployWorkflow;
             while (!found)
             {
-              var response = github.rest.actions.listWorkflowRuns({
+              var {data: runs} = await github.rest.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 head_sha: '${{ steps.get-sha.outputs.sha }}'
               })
-              deployWorkflow = response.data.workflow_runs.find(workflow => workflow.name === "Deploy")
+              deployWorkflow = response.workflow_runs.find(workflow => workflow.name === "Deploy")
               if (deployWorkflow && deployWorkflow.length > 0) {
                 found = true;
                 break;
