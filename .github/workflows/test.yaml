@@ -106,7 +106,7 @@ jobs:
             let deployWorkflow;
             while (!found)
             {
-              var {data: runs} = await github.rest.actions.listWorkflowRuns({
+              const {data: runs} = await github.rest.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 head_sha: '${{ steps.get-sha.outputs.sha }}'
