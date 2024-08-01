@@ -19,13 +19,14 @@ jobs:
     name: "Run deploy scripts"
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Get Pull Request Number
         id: pr
         run: echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/checkout@v4
       - name: Sets branch name
         id: extract_branch
         env:
