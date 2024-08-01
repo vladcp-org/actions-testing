@@ -2,10 +2,13 @@ name: Deploy
 
 on:
   workflow_dispatch:
+    inputs:
+      distinct_id:
+        description: "distinct id"
   pull_request:
-  push:
-    branches:
-      - "feature/**"
+  # push:
+  #   branches:
+  #     - "feature/**"
 
 permissions:
   contents: read
@@ -20,6 +23,9 @@ jobs:
     name: "Run deploy scripts"
     runs-on: ubuntu-latest
     steps:
+      - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
+        run: echo ${{ github.event.inputs.distinct_id }}
+
       - uses: actions/checkout@v4
       - name: Sets branch name
         id: extract_branch

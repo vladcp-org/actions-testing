@@ -2,18 +2,15 @@ name: Run tests
 
 on: 
   workflow_dispatch:
-    inputs:
-      distinct_id:
-        description: "distinct id"
 
   # workflow_run:
   #   workflows: ["Deploy"]
   #   types: 
   #     - completed
   pull_request:
-  # push:
-  #   branches:
-  #     - "feature/**"
+  push:
+    branches:
+      - "feature/**"
 
 permissions: write-all
 jobs:
@@ -21,9 +18,6 @@ jobs:
     name: "Run dummy tests"
     runs-on: ubuntu-latest
     steps:
-      - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
-        run: echo ${{ github.event.inputs.distinct_id }}
-
       - name: Dispatch an action and get the run ID
         uses: codex-/return-dispatch@v1
         id: return_dispatch
