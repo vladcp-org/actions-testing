@@ -97,10 +97,15 @@ jobs:
         with:
           github-token: ${{ secrets.PAT }}
           script: |
-            github.checks.create({
-              name: 'run tests',
-              head_sha: '${{ steps.get-sha.outputs.sha}}',
-              status: 'completed',
+            const checks = await github.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: '${{ steps.get-sha.outputs.sha }}'
+            })
+            const runDummyTestsCheck = checks.data.check_runs.find(check_run => check_run.name === "Run dummy tests");
+            
+            github.checks.update({
+              check_run_id: runDummyTestsCheck.id,
               conclusion: 'success',
               output: {
                 title: 'Run tests',
