@@ -109,7 +109,6 @@ jobs:
               check_run_id: runDummyTestsCheck.id,
               conclusion: 'success',
               output: {
-                title: 'Run tests',
                 summary: 'Results: marvellous results right here'
               },
               owner: context.repo.owner,
