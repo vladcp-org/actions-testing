@@ -83,7 +83,7 @@ jobs:
 
       - name: get sha from PR number and save output
         id: get-sha
-        uses: actions/github-script@v6
+        uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
