@@ -83,12 +83,12 @@ jobs:
 
       - name: get sha from PR number and save output
         id: get-sha
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             console.log('PR number: ' + ${{ steps.pr.outputs.pull_request_number }})
-            const pr = await github.pulls.get({
+            const pr = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: ${{ steps.pr.outputs.pull_request_number }}
