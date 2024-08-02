@@ -16,6 +16,8 @@ on:
       - "feature/**"
 
 permissions: write-all
+env:
+  BRANCH_NAME: ${{github.ref_name || github.head_ref}}
 jobs:
   tests:
     name: "Run dummy tests"
@@ -49,13 +51,15 @@ jobs:
       - name: Print hello
         run: >
           echo "Hello World!"
-      - name: Determine branch name
-        run: |
-          if [ "${{github.event_name}}" == "workflow_run" ]; then
-            echo "BRANCH_NAME=${{github.event.workflow_run.head_branch}}" >> $GITHUB_ENV
-          elif [ "${{github.event_name}}" == "workflow_dispatch" ]; then
-            echo "BRANCH_NAME=${{github.ref_name || github.head_ref}}" >> $GITHUB_ENV
-          fi
+
+      # - name: Determine branch name
+      #   run: |
+      #     if [ "${{github.event_name}}" == "workflow_run" ]; then
+      #       echo "BRANCH_NAME=${{github.event.workflow_run.head_branch}}" >> $GITHUB_ENV
+      #     elif [ "${{github.event_name}}" == "workflow_dispatch" ]; then
+      #       echo "BRANCH_NAME=${{github.ref_name || github.head_ref}}" >> $GITHUB_ENV
+      #     fi
+
       - name: Print event branch, hopefully
         run: >
           echo "BRANCH NAME is ${{ env.BRANCH_NAME }}"
@@ -75,26 +79,44 @@ jobs:
         env:
           EVENT: ${{ github.event_name }}
           REF: ${{ github.ref }}
-      - name: Get Pull Request Number
-        id: pr
-        run: echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: get sha from PR number and save output
-        id: get-sha
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            console.log('PR number: ' + ${{ steps.pr.outputs.pull_request_number }})
-            const pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: ${{ steps.pr.outputs.pull_request_number }}
-            })
-            console.log('PR Head sha: ' + pr.data.head.sha)
-            core.setOutput('sha', pr.data.head.sha)
+      # - name: Get Pull Request number
+      #   id: pr
+      #   run: echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # - name: Get open Pull Request sha for this branch, if any, otherwise get commit sha
+      #   uses: actions/github-script@v6
+      #   id: pr-open
+      #   with: 
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       const pr_list = await github.rest.pulls.list({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         state: 'open',
+      #         base: '${{ env.BRANCH_NAME }}'
+      #       })
+      #       if (pr_list > 0) {
+            
+      #       }
+            
+
+      # - name: get sha from PR number and save output
+      #   id: get-sha
+      #   uses: actions/github-script@v6
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       console.log('PR number: ' + ${{ steps.pr.outputs.pull_request_number }})
+      #       const pr = await github.rest.pulls.get({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         pull_number: ${{ steps.pr.outputs.pull_request_number }}
+      #       })
+      #       console.log('PR Head sha: ' + pr.data.head.sha)
+      #       core.setOutput('sha', pr.data.head.sha)
       - name: Get commit SHA
         run: echo "SHA=${GITHUB_SHA}" >> $GITHUB_ENV
 
@@ -148,7 +170,8 @@ jobs:
 
             await waitForWorkflowsToComplete();
 
-
+      - name: Run Tests or whatever
+        run: echo "Running many many tests..."
 
       # todo report tests 
       # - name: Report tests check
