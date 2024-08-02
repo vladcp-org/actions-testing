@@ -135,7 +135,8 @@ jobs:
 
               while (runningWorkflows.length > 0) {
                 console.log(`Waiting for ${runningWorkflows.length} workflows to complete...`);
-                await new Promise(resolve => setTimeout(resolve, 60000)); // Wait for 1 minute
+                console.log(`Name: ${runningWorkflows[0].name}, run number: ${runningWorkflows[0].run_number}`);
+                await new Promise(resolve => setTimeout(resolve, 10000)); // Wait for 1 minute
                 runningWorkflows = await getRunningWorkflows();
               }
 
@@ -153,7 +154,7 @@ jobs:
             const {data: runs} = await github.rest.actions.listWorkflowRuns({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              workflow_id: 'deploy.yaml'
+              workflow_id: 'deploy.yaml',
               head_sha: '${{ steps.get-sha.outputs.sha }}',
             })
             console.log("Deploy workflow: ", JSON.stringify(runs, null, 2))
