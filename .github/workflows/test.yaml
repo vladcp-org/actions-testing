@@ -83,7 +83,7 @@ jobs:
 
       - name: get sha from PR number and save output
         id: get-sha
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -95,8 +95,10 @@ jobs:
             })
             console.log('PR Head sha: ' + pr.data.head.sha)
             core.setOutput('sha', pr.data.head.sha)
-      
-      - name: Check for Running Workflows
+      - name: Get commit SHA
+        run: echo "SHA=${GITHUB_SHA}" >> $GITHUB_ENV
+
+      - name: Wait for the branch deployment script to finish 
         id: check_workflows
         uses: actions/github-script@v6
         with:
@@ -112,6 +114,7 @@ jobs:
               });
 
               console.log(workflows.workflows)
+              console.log('Commit sha: ', '${{env.SHA}}')
 
               let runningWorkflows = [];
               const { data: runs } = await github.rest.actions.listWorkflowRuns({
@@ -119,7 +122,7 @@ jobs:
                 repo,
                 workflow_id: 'deploy.yaml',
                 status: 'in_progress',
-                head_sha: '${{ steps.get-sha.outputs.sha }}'
+                head_sha: '${{env.SHA}}'
               });
 
               for (const run of runs.workflow_runs) {
@@ -144,20 +147,7 @@ jobs:
             }
 
             await waitForWorkflowsToComplete();
-      - name: Get workflow runs
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ github.token }}
-          script: |
-            let found = false
-            let deployWorkflow
-            const {data: runs} = await github.rest.actions.listWorkflowRuns({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'deploy.yaml',
-              head_sha: '${{ steps.get-sha.outputs.sha }}',
-            })
-            console.log("Deploy workflow: ", JSON.stringify(runs, null, 2))
+
 
 
       # todo report tests 
