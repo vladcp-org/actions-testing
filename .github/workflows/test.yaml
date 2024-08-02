@@ -114,19 +114,17 @@ jobs:
               console.log(workflows.workflows)
 
               let runningWorkflows = [];
+              const { data: runs } = await github.rest.actions.listWorkflowRuns({
+                owner,
+                repo,
+                workflow_id: 'deploy.yaml',
+                status: 'in_progress',
+                head_sha: '${{ steps.get-sha.outputs.sha }}'
+              });
 
-              for (const workflow of workflows.workflows) {
-                const { data: runs } = await github.rest.actions.listWorkflowRuns({
-                  owner,
-                  repo,
-                  workflow_id: workflow.id,
-                  status: 'in_progress'
-                });
-
-                for (const run of runs.workflow_runs) {
-                  if (run.id !== run_id) {
-                    runningWorkflows.push(run);
-                  }
+              for (const run of runs.workflow_runs) {
+                if (run.id !== run_id) {
+                  runningWorkflows.push(run);
                 }
               }
               return runningWorkflows;
@@ -145,23 +143,20 @@ jobs:
             }
 
             await waitForWorkflowsToComplete();
-      # - name: Get workflow runs
-      #   uses: actions/github-script@v5
-      #   with:
-      #     github-token: ${{ github.token }}
-      #     script: |
-      #       let found = false
-      #       let deployWorkflow
-      #       const {data: runs} = await github.rest.actions.listWorkflowRuns({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         head_sha: '${{ steps.get-sha.outputs.sha }}',
-      #       })
-      #       deployWorkflow = response.workflow_runs.find(workflow => workflow.name === "Deploy")
-      #       if (deployWorkflow && deployWorkflow.length > 0) {
-      #         found = true
-      #       }
-      #       console.log("Deploy workflow: ", JSON.stringify(deployWorkflow, null, 2))
+      - name: Get workflow runs
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            let found = false
+            let deployWorkflow
+            const {data: runs} = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'deploy.yaml'
+              head_sha: '${{ steps.get-sha.outputs.sha }}',
+            })
+            console.log("Deploy workflow: ", JSON.stringify(runs, null, 2))
 
 
       # todo report tests 
