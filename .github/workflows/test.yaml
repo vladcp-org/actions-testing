@@ -95,55 +95,56 @@ jobs:
             })
             console.log('PR Head sha: ' + pr.data.head.sha)
             core.setOutput('sha', pr.data.head.sha)
-            - name: Check for Running Workflows
-            id: check_workflows
-            uses: actions/github-script@v6
-            with:
-              script: |
-                const owner = context.repo.owner;
-                const repo = context.repo.repo;
-                const run_id = context.runId;
-    
-                async function getRunningWorkflows() {
-                  const { data: workflows } = await github.rest.actions.listRepoWorkflows({
-                    owner,
-                    repo,
-                  });
-    
-                  console.log(workflows.workflows)
-    
-                  let runningWorkflows = [];
-    
-                  for (const workflow of workflows.workflows) {
-                    const { data: runs } = await github.rest.actions.listWorkflowRuns({
-                      owner,
-                      repo,
-                      workflow_id: workflow.id,
-                      status: 'in_progress'
-                    });
-    
-                    for (const run of runs.workflow_runs) {
-                      if (run.id !== run_id) {
-                        runningWorkflows.push(run);
-                      }
-                    }
+      
+      - name: Check for Running Workflows
+        id: check_workflows
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const run_id = context.runId;
+
+            async function getRunningWorkflows() {
+              const { data: workflows } = await github.rest.actions.listRepoWorkflows({
+                owner,
+                repo,
+              });
+
+              console.log(workflows.workflows)
+
+              let runningWorkflows = [];
+
+              for (const workflow of workflows.workflows) {
+                const { data: runs } = await github.rest.actions.listWorkflowRuns({
+                  owner,
+                  repo,
+                  workflow_id: workflow.id,
+                  status: 'in_progress'
+                });
+
+                for (const run of runs.workflow_runs) {
+                  if (run.id !== run_id) {
+                    runningWorkflows.push(run);
                   }
-                  return runningWorkflows;
                 }
-    
-                async function waitForWorkflowsToComplete() {
-                  let runningWorkflows = await getRunningWorkflows();
-    
-                  while (runningWorkflows.length > 0) {
-                    console.log(`Waiting for ${runningWorkflows.length} workflows to complete...`);
-                    await new Promise(resolve => setTimeout(resolve, 60000)); // Wait for 1 minute
-                    runningWorkflows = await getRunningWorkflows();
-                  }
-    
-                  console.log('All workflows completed.');
-                }
-    
-                await waitForWorkflowsToComplete();
+              }
+              return runningWorkflows;
+            }
+
+            async function waitForWorkflowsToComplete() {
+              let runningWorkflows = await getRunningWorkflows();
+
+              while (runningWorkflows.length > 0) {
+                console.log(`Waiting for ${runningWorkflows.length} workflows to complete...`);
+                await new Promise(resolve => setTimeout(resolve, 60000)); // Wait for 1 minute
+                runningWorkflows = await getRunningWorkflows();
+              }
+
+              console.log('All workflows completed.');
+            }
+
+            await waitForWorkflowsToComplete();
       # - name: Get workflow runs
       #   uses: actions/github-script@v5
       #   with:
