@@ -25,7 +25,7 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const sha = '${{ env.BRANCH_NAME }}';
+            const sha = '${ GITHUB_REF }';
             const {data: commits} = await github.rest.repos.listCommits({
               owner, 
               repo,
@@ -36,6 +36,7 @@ jobs:
 
             for (const c of commits) {
               if (c.sha == '${{ github.sha }}'){
+                console.log("Reached current commit.");
                 break;
               }
               foundPrevCommit = true;
