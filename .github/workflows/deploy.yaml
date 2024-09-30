@@ -31,7 +31,6 @@ jobs:
             const sha = '${{ github.ref }}';
             const commitSha = '${{ github.sha }}';
 
-            console.log("Printing sha: " + c.sha);
             const {data: commit} = await github.rest.repos.getCommit({
                 owner, 
                 repo,
