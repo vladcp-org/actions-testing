@@ -1,10 +1,10 @@
-
+MY BRANCH
             const sha = '${{ github.ref }}';
             console.log("Getting Current push/ commit date")
             const {data: commit} = await github.rest.repos.getCommit({
               owner, 
               repo,
-              sha 
+              sha: '${{github
             })
              const currentCommitDate = commit.commit.committer.date;
 
