@@ -15,6 +15,33 @@ permissions: write-all
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 jobs:
+  check_first_push:
+    name: "Check if this is first push"
+    runs-on: ubuntu-latest
+    steps: 
+      - name: "Check if this is first push"
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const sha = '${{env.BRANCH_NAME}}'
+            const {data: commits} = await github.rest.actions.listCommits({
+              owner, 
+              repo,
+              sha: '${{ github.head_ref }}'
+            });
+            
+            let foundPrevCommit = false;
+
+            for (const c of commits) {
+              if (c.sha == '${{ github.sha }}'){
+                break;
+              }
+              foundPrevCommit = true;
+              console.log("Found a previous commit");
+            }
+
   deploy:
     name: "Run deploy scripts"
     runs-on: ubuntu-latest
