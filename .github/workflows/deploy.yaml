@@ -29,15 +29,6 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const sha = '${{ github.ref }}';
-            console.log("Getting Current push/ commit date")
-            const {data: commit} = await github.rest.repos.getCommit({
-              owner, 
-              repo,
-              sha 
-            })
-
-            const currentCommitDate = commit.commit.committer.date;
-            console.log("Current commit date: " + currentCommitDate);
 
             const {data: commits} = await github.rest.repos.listCommits({
               owner, 
@@ -48,6 +39,8 @@ jobs:
             let foundPrevCommit = false;
 
             for (const c of commits) {
+              console.log("Printing sha: " + c.sha);
+
               if (c.sha == '${{ github.sha }}'){
                 console.log("Reached current commit.");
               } else {
