@@ -19,27 +19,40 @@ jobs:
     name: "Check if this is first push"
     runs-on: ubuntu-latest
     steps: 
+      - name: Get commit SHA
+        run: echo "SHA=${GITHUB_SHA}" >> $GITHUB_ENV
+
       - name: "Check if this is first push"
         uses: actions/github-script@v6
         with:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const sha = '${{env.BRANCH_NAME}}'
-            const {data: commits} = await github.rest.actions.listCommits({
+            const sha = '${{ github.ref }}';
+            const commitSha = '${{ github.sha }}';
+
+            const {data: commit} = await github.rest.repos.getCommit({
+                owner, 
+                repo,
+                sha: 'heads/${{env.BRANCH_NAME}}'
+              })
+            console.log("First commit date: " + commit.commit.committer.date);
+
+            const {data: commits} = await github.rest.repos.listCommits({
               owner, 
               repo,
-              sha: '${{ github.head_ref }}'
+              sha: '${{env.BRANCH_NAME}}'
             });
             
             let foundPrevCommit = false;
-
+        
             for (const c of commits) {
               if (c.sha == '${{ github.sha }}'){
-                break;
+                console.log("Reached current commit.");
+              } else {
+                console.log("Found a previous commit: " + c.sha + "====" + c.commit.message + "\n");
               }
               foundPrevCommit = true;
-              console.log("Found a previous commit");
             }
 
   deploy:
