@@ -34,7 +34,7 @@ jobs:
             const {data: commit} = await github.rest.repos.getCommit({
                 owner, 
                 repo,
-                sha: '${{env.BRANCH_NAME}}'
+                sha: 'heads/${{env.BRANCH_NAME}}'
               })
             console.log("First commit date: " + commit.commit.committer.date);
 
