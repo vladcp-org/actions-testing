@@ -34,14 +34,14 @@ jobs:
             const {data: commit} = await github.rest.repos.getCommit({
                 owner, 
                 repo,
-                sha: commitSha
+                sha: '${{env.BRANCH_NAME}}'
               })
             console.log("First commit date: " + commit.commit.committer.date);
 
             const {data: commits} = await github.rest.repos.listCommits({
               owner, 
               repo,
-              sha
+              sha: '${{env.BRANCH_NAME}}'
             });
             
             let foundPrevCommit = false;
