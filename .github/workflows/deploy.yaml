@@ -33,7 +33,7 @@ jobs:
             const {data: commit} = await github.rest.repos.getCommit({
               owner, 
               repo,
-              sha: 'heads/${{ env.BRANCH_NAME }}'
+              sha 
             })
 
             const currentCommitDate = commit.commit.committer.date;
