@@ -26,7 +26,7 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const sha = '${{env.BRANCH_NAME}}'
-            const {data: commits} = await github.rest.actions.listCommits({
+            const {data: commits} = await github.rest.repos.listCommits({
               owner, 
               repo,
               sha: '${{ github.head_ref }}'
