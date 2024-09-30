@@ -29,7 +29,7 @@ jobs:
             const {data: commits} = await github.rest.repos.listCommits({
               owner, 
               repo,
-              sha: '${{ github.head_ref }}'
+              sha
             });
             
             let foundPrevCommit = false;
