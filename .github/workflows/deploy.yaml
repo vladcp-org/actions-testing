@@ -29,6 +29,15 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const sha = '${{ github.ref }}';
+            const commitSha = '${{ github.sha }}';
+
+            console.log("Printing sha: " + c.sha);
+            const {data: commit} = await github.rest.repos.getCommit({
+                owner, 
+                repo,
+                sha: commitSha
+              })
+            console.log("First commit date: " + commit.commit.committer.date);
 
             const {data: commits} = await github.rest.repos.listCommits({
               owner, 
@@ -37,17 +46,14 @@ jobs:
             });
             
             let foundPrevCommit = false;
-
+        
             for (const c of commits) {
-              console.log("Printing sha: " + c.sha);
-
               if (c.sha == '${{ github.sha }}'){
                 console.log("Reached current commit.");
               } else {
-                console.log("Found a previous commit: " + c.sha + "\n" + c.commit.message);
+                console.log("Found a previous commit: " + c.sha + "====" + c.commit.message + "\n");
               }
               foundPrevCommit = true;
-              console.log("Found a previous commit: " + c.sha + "\n" + c.commit.message);
             }
 
   deploy:
