@@ -31,8 +31,6 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const sha = '${{ github.ref }}';
-            const commitSha = '${{ github.sha }}';
             const run_id = context.runId;
 
             async function isFirstPush() {
@@ -50,12 +48,10 @@ jobs:
                 }
               }
               console.log('Other workflows', runningWorkflows)
-              return runningWorkflows.length == 0;
+              console.log("Length: ", !runningWorkflows.length)
+              return !runningWorkflows.length;
             }
-            let foundPrevCommit = false;
-
             core.setOutput('isFirstPush', isFirstPush());
-      
 
   deploy:
     name: "Run deploy scripts"
