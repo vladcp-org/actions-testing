@@ -18,7 +18,7 @@ jobs:
   check_first_push:
     name: "Check if this is first push"
     outputs:
-      deploy-all: ${{steps.first-push.outputs.deploy-all}}
+      isFirstPush: ${{steps.first-push.outputs.isFirstPush}}
     runs-on: ubuntu-latest
     steps: 
       - name: Get commit SHA
@@ -54,14 +54,14 @@ jobs:
             }
             let foundPrevCommit = false;
 
-            core.setOutput('deploy-all', isFirstPush());
+            core.setOutput('isFirstPush', isFirstPush());
       
 
   deploy:
     name: "Run deploy scripts"
     runs-on: ubuntu-latest
     needs: [check_first_push]
-    if: ${{needs.check_first_push.outputs.deploy-all}}
+    if: ${{needs.check_first_push.outputs.isFirstPush == 'true'}}
     steps:
       - uses: actions/checkout@v4
 
