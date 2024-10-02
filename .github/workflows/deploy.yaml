@@ -17,6 +17,8 @@ env:
 jobs:
   check_first_push:
     name: "Check if this is first push"
+    outputs:
+      isFirstPush: ${{steps.first-push.outputs.isFirstPush}}
     runs-on: ubuntu-latest
     steps: 
       - name: Get commit SHA
@@ -24,40 +26,42 @@ jobs:
 
       - name: "Check if this is first push"
         uses: actions/github-script@v6
+        id: first-push
         with:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const sha = '${{ github.ref }}';
             const commitSha = '${{ github.sha }}';
+            const run_id = context.runId;
 
-            const {data: commit} = await github.rest.repos.getCommit({
-                owner, 
+            async function isFirstPush() {
+              let runningWorkflows = [];
+              const { data: runs } = await github.rest.actions.listWorkflowRuns({
+                owner,
                 repo,
-                sha: 'heads/${{env.BRANCH_NAME}}'
-              })
-            console.log("First commit date: " + commit.commit.committer.date);
+                workflow_id: 'deploy.yaml',
+                branch: '${{env.BRANCH_NAME}}'
+              });
 
-            const {data: commits} = await github.rest.repos.listCommits({
-              owner, 
-              repo,
-              sha: '${{env.BRANCH_NAME}}'
-            });
-            
-            let foundPrevCommit = false;
-        
-            for (const c of commits) {
-              if (c.sha == '${{ github.sha }}'){
-                console.log("Reached current commit.");
-              } else {
-                console.log("Found a previous commit: " + c.sha + "====" + c.commit.message + "\n");
+              for (const run of runs.workflow_runs) {
+                if (run.id !== run_id) { 
+                  runningWorkflows.push(run);
+                }
               }
-              foundPrevCommit = true;
+              console.log('Other workflows', runningWorkflows)
+              return runningWorkflows.length == 0;
             }
+            let foundPrevCommit = false;
+
+            core.setOutput('isFirstPush', isFirstPush());
+      
 
   deploy:
     name: "Run deploy scripts"
     runs-on: ubuntu-latest
+    needs: [check_first_push]
+    if: ${{needs.check_first_push.outputs.isFirstPush == 'true'}}
     steps:
       - uses: actions/checkout@v4
 
