@@ -33,6 +33,7 @@ jobs:
             const repo = context.repo.repo;
             const sha = '${{ github.ref }}';
             const commitSha = '${{ github.sha }}';
+            const run_id = context.runId;
 
             async function isFirstPush() {
               let runningWorkflows = [];
