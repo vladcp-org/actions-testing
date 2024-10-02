@@ -51,7 +51,9 @@ jobs:
               console.log("Length: ", !runningWorkflows.length)
               return !runningWorkflows.length;
             }
-            core.setOutput('isFirstPush', isFirstPush());
+
+            const result = await isFirstPush();
+            core.setOutput('isFirstPush', result);
 
       - name: "Print output isFirstPush"
         env:
