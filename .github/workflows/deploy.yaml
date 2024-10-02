@@ -54,7 +54,9 @@ jobs:
             core.setOutput('isFirstPush', isFirstPush());
 
       - name: "Print output isFirstPush"
-        run: echo "${{steps.first-push.outputs.isFirstPush}}"
+        env:
+          FIRST_PUSH: ${{ steps.first-push.outputs.isFirstPush }}
+        run: echo "$FIRST_PUSH"
 
   deploy:
     name: "Run deploy scripts"
