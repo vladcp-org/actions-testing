@@ -47,7 +47,7 @@ jobs:
                   runningWorkflows.push(run);
                 }
               }
-              console.log('Other workflows', runningWorkflows)
+              console.log('Other workflows: ', runningWorkflows.length)
               console.log("Length: ", !runningWorkflows.length)
               return !runningWorkflows.length;
             }
