@@ -53,6 +53,9 @@ jobs:
             }
             core.setOutput('isFirstPush', isFirstPush());
 
+      - name: "Print output isFirstPush"
+        run: echo "${{steps.first-push.outputs.isFirstPush}}"
+
   deploy:
     name: "Run deploy scripts"
     runs-on: ubuntu-latest
