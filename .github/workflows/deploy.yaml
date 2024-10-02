@@ -40,7 +40,7 @@ jobs:
                 owner,
                 repo,
                 workflow_id: 'deploy-branch-environment.yaml',
-                branch: '${{ env.BRANCH_NAME }}'
+                branch: sha
               });
 
               for (const run of runs.workflow_runs) {
