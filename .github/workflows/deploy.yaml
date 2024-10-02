@@ -48,8 +48,8 @@ jobs:
                 }
               }
               console.log('Other workflows', runningWorkflows)
-              console.log("Length: ", runningWorkflows.length == 0)
-              return runningWorkflows.length == 0;
+              console.log("Length: ", !runningWorkflows.length)
+              return !runningWorkflows.length;
             }
             core.setOutput('isFirstPush', isFirstPush());
 
