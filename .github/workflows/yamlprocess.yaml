@@ -3,10 +3,10 @@ name: Yaml Stuff
 on: 
   push:
     branches:
-      - "*"
+      - "feature/other"
 
 jobs:
-  your_job_name:
+  yaml-job:
     runs-on: ubuntu-latest 
     steps:
       - uses: actions/checkout@v4 # Always checkout your code first
