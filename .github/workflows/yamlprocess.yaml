@@ -1,0 +1,50 @@
+name: Run tests
+
+on: 
+  push:
+    branches:
+      - "*"
+
+jobs:
+  your_job_name:
+    runs-on: ubuntu-latest 
+    steps:
+      - uses: actions/checkout@v4 # Always checkout your code first
+
+      - name: Install yq
+        uses: mikefarah/yq@master 
+
+      - name: Read YAML with yq
+        run: |
+          configYaml="your-config.yaml" # Replace with your actual config file path
+
+          # Create a dummy config.yaml for demonstration
+          cat <<EOF > "$configYaml"
+          noticePeriodHours:
+            default: 2
+            en: 5
+            de: -2
+          resetPendingIfSooner: 10
+          sendingPeriod: "daily"
+          EOF
+
+          # Extract the 'default' value from noticePeriodHours
+          noticePeriodHoursRaw=$(yq -r '.noticePeriodHours.default // ""' "$configYaml") # Using // "" to get empty string if null
+
+          # Extract other values (if still needed)
+          resetPendingIfSoonerRaw=$(yq -r '.resetPendingIfSooner // ""' "$configYaml")
+          sendingPeriodRaw=$(yq -r '.sendingPeriod // ""' "$configYaml")
+
+          echo "noticePeriodHoursRaw: '$noticePeriodHoursRaw'"
+          echo "resetPendingIfSoonerRaw: '$resetPendingIfSoonerRaw'"
+          echo "sendingPeriodRaw: '$sendingPeriodRaw'"
+
+          # Example of your bash logic with the extracted values
+          noticePeriodHours="null" # Initialize with null string
+          if [ -n "$noticePeriodHoursRaw" ]; then
+              noticePeriodHours="$noticePeriodHoursRaw"
+              echo "Notice period (after yq): $noticePeriodHours"
+          else
+              noticePeriodHours="0" # Fallback if not found/null
+              echo "Notice period (default fallback): $noticePeriodHours"
+          fi

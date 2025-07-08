@@ -1,0 +1,11 @@
+name: Run tests
+
+jobs:
+  check workflow dir:
+    name: "Check if this is first push"
+    outputs:
+      isFirstPush: ${{steps.first-push.outputs.isFirstPush}}
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Get commit SHA
+        run: echo "SHA=${GITHUB_SHA}" >> $GITHUB_ENV

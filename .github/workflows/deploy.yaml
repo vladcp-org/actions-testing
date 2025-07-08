@@ -6,9 +6,9 @@ on:
       distinct_id:
         description: "distinct id"
   # pull_request:
-  push:
-    branches:
-      - "feature/**"
+  #push:
+  #  branches:
+  #    - "feature/**"
 
 permissions: write-all
 
