@@ -1,5 +1,7 @@
 name: Run tests
 
+on: 
+  workflow_dispatch:
 jobs:
   check workflow dir:
     name: "Check if this is first push"
