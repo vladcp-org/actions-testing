@@ -29,7 +29,7 @@ jobs:
           EOF
 
           # Extract the 'default' value from noticePeriodHours
-          noticePeriodHoursRaw=$(yq -r '.noticePeriodHours.gh' "$configYaml") # Using // "" to get empty string if null
+          noticePeriodHoursRaw=$(yq -r '.noticePeriodHours.gh // ""' "$configYaml") # Using // "" to get empty string if null
 
           # Extract other values (if still needed)
           resetPendingIfSoonerRaw=$(yq -r '.resetPendingIfSooner // ""' "$configYaml")
